@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        go-version: ["1.19", "1.20"]
+
+    steps:
+
+    - name: Set up Go ${{ matrix.go-version }}
+      uses: actions/setup-go@v3
+      with:
+        go-version: ${{ matrix.go-version }}
+
+    - name: Check out code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 10
+
+    - name: Check formatting
+      run: make format
+
+    - name: Test
+      run: make test
+    
+    # - name: Update coverage badge
+    #   uses: schneegans/dynamic-badges-action@v1.3.0
+    #   if: github.ref_name == 'main'
+    #   with:
+    #     auth: ${{ secrets.COVERAGE_GIST_SECRET }}
+    #     gistID: ""
+    #     filename: coverage.json
+    #     label: Go Coverage
+    #     message: ${{ steps.coverage.outputs.coverage-pct }}%
+    #     color: ${{ steps.coverage.outputs.meets-threshold == 'true' && 'green' || 'red' }}
