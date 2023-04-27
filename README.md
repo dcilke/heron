@@ -1,3 +1,6 @@
+[![Go Reference](https://pkg.go.dev/badge/github.com/dcilke/heron.svg)](https://pkg.go.dev/github.com/dcilke/heron)
+![Build Status](https://github.com/dcilke/heron/actions/workflows/ci.yml/badge.svg)
+
 # heron
 
 A JSON stream parser.
