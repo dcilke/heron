@@ -127,13 +127,17 @@ func (p *Heron) Flush() {
 
 func (p *Heron) processByte(decoder *goj.Decoder) error {
 	b, err := decoder.ReadByte()
-	if err == io.EOF || b == newLine {
+	if err == io.EOF {
 		p.Flush()
 		return err
 	}
 
 	p.push(b)
-	p.flushFull()
+	if b == newLine {
+		p.Flush()
+	} else {
+		p.flushFull()
+	}
 	return nil
 }
 

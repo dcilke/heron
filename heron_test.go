@@ -53,6 +53,7 @@ func TestHeron_NDJSON(t *testing.T) {
 	e.Process(file)
 	require.Equal(t, []any{
 		map[string]any{"foo": "bar"},
+		"\n",
 		map[string]any{"bin": "baz"},
 	}, out)
 }
@@ -111,7 +112,7 @@ func TestHeron_BufLimit(t *testing.T) {
 	e.Process(file)
 	require.Equal(t, []any{
 		map[string]any{"foo": "bar"},
-		"a",
+		"a\n",
 		"bc",
 		"d",
 	}, out)
@@ -129,5 +130,21 @@ func TestHeron_NoBuf(t *testing.T) {
 	e.Process(file)
 	require.Equal(t, []any{
 		map[string]any{"foo": "bar"},
+	}, out)
+}
+
+func TestHeron_NewLine(t *testing.T) {
+	file := bytes.NewBufferString("{\"foo\": \"bar\"}\ntest\n")
+	out := make([]any, 0, 1)
+	e := heron.New(
+		heron.WithJSON(func(o any) { out = append(out, o) }),
+		heron.WithBytes(func(o []byte) { out = append(out, string(o)) }),
+		heron.WithError(func(o error) { out = append(out, o) }),
+	)
+	e.Process(file)
+	require.Equal(t, []any{
+		map[string]any{"foo": "bar"},
+		"\n",
+		"test\n",
 	}, out)
 }
