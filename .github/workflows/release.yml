@@ -1,0 +1,27 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - run: git fetch --force --tags
+      - uses: actions/setup-go@v4
+        with:
+          go-version: stable
+      - name: Check formatting
+        run: make format
+      - name: Test
+        run: make test
+      - name: Release
+        run: GOPROXY=proxy.golang.org go list -m github.com/$GITHUB_REPOSITORY@$GITHUB_REF_NAME
